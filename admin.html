@@ -77,6 +77,19 @@
   .img-preview{width:100%;height:140px;object-fit:cover;border-radius:8px;background:var(--navy-800);margin-bottom:10px;}
   .checkbox-row{display:flex;align-items:center;gap:8px;margin:10px 0;}
   .checkbox-row input{width:auto;}
+
+  .stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:26px;}
+  .stat-card{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;}
+  .stat-card span{display:block;color:var(--ink-soft);font-size:12.5px;margin-bottom:6px;}
+  .stat-card b{font-size:22px;font-family:'JetBrains Mono';}
+
+  .img-manager{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;}
+  .img-manager .thumb-wrap{position:relative;width:70px;height:70px;}
+  .img-manager .thumb-wrap img{width:100%;height:100%;object-fit:cover;border-radius:8px;border:1px solid var(--line);}
+  .img-manager .thumb-wrap button{position:absolute;top:-6px;left:-6px;background:var(--danger);color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;line-height:1;}
+
+  select#orderStatusFilter{background:var(--navy-800);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:8px 12px;font-size:13px;}
+  select.status-select{background:var(--navy-800);border:1px solid var(--line);color:var(--ink);border-radius:6px;padding:5px 8px;font-size:12.5px;}
 </style>
 </head>
 <body>
@@ -100,6 +113,8 @@
     </div>
     <div class="nav-item active" data-tab="products" onclick="switchTab('products')">📦 المنتجات</div>
     <div class="nav-item" data-tab="categories" onclick="switchTab('categories')">🗂️ الأقسام</div>
+    <div class="nav-item" data-tab="coupons" onclick="switchTab('coupons')">🏷️ الكوبونات</div>
+    <div class="nav-item" data-tab="orders" onclick="switchTab('orders')">🧾 الطلبات والإحصائيات</div>
     <div class="nav-item logout" onclick="doLogout()">🚪 تسجيل الخروج</div>
   </aside>
 
@@ -125,7 +140,69 @@
         <tbody id="categoriesTableBody"><tr class="empty-row"><td colspan="4">جاري التحميل...</td></tr></tbody>
       </table>
     </div>
+
+    <div class="tab-view" id="tab-coupons">
+      <div class="topline">
+        <div><h2>الكوبونات</h2><p>أكواد خصم يقدر العميل يستخدمها في السلة</p></div>
+        <button class="btn btn-primary" onclick="openCouponModal()">+ إضافة كوبون</button>
+      </div>
+      <table>
+        <thead><tr><th>الكود</th><th>نوع الخصم</th><th>القيمة</th><th>أقل طلب</th><th>الاستخدام</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+        <tbody id="couponsTableBody"><tr class="empty-row"><td colspan="7">جاري التحميل...</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="tab-view" id="tab-orders">
+      <div class="topline">
+        <div><h2>الطلبات والإحصائيات</h2><p>كل الطلبات اللي جت من الموقع</p></div>
+        <select id="orderStatusFilter" onchange="renderOrdersTable()">
+          <option value="all">كل الحالات</option>
+          <option value="pending">قيد الانتظار</option>
+          <option value="pending_payment">في انتظار التحويل</option>
+          <option value="confirmed">مؤكد</option>
+          <option value="shipped">تم الشحن</option>
+          <option value="completed">مكتمل</option>
+          <option value="cancelled">ملغي</option>
+        </select>
+      </div>
+      <div class="stat-cards">
+        <div class="stat-card"><span>إجمالي الطلبات</span><b id="statTotalOrders">0</b></div>
+        <div class="stat-card"><span>إجمالي المبيعات</span><b id="statTotalRevenue">0 ج.م</b></div>
+        <div class="stat-card"><span>متوسط قيمة الطلب</span><b id="statAvgOrder">0 ج.م</b></div>
+        <div class="stat-card"><span>الأكثر مبيعًا</span><b id="statTopProduct" style="font-size:14px;">-</b></div>
+      </div>
+      <table>
+        <thead><tr><th>المرجع</th><th>المنتجات</th><th>الإجمالي</th><th>طريقة الدفع</th><th>الحالة</th><th>التاريخ</th><th></th></tr></thead>
+        <tbody id="ordersTableBody"><tr class="empty-row"><td colspan="7">جاري التحميل...</td></tr></tbody>
+      </table>
+    </div>
   </main>
+</div>
+
+<!-- Coupon Modal -->
+<div class="modal-overlay" id="couponModalOverlay">
+  <div class="modal-box">
+    <h3 id="couponModalTitle">إضافة كوبون</h3>
+    <input type="hidden" id="couponId">
+    <div class="field"><label>الكود (بالإنجليزي بدون مسافات)</label><input type="text" id="couponCode" placeholder="SAVE10"></div>
+    <div class="grid2">
+      <div class="field"><label>نوع الخصم</label>
+        <select id="couponType"><option value="percent">نسبة %</option><option value="fixed">مبلغ ثابت ج.م</option></select>
+      </div>
+      <div class="field"><label>قيمة الخصم</label><input type="number" id="couponValue" placeholder="10"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>أقل قيمة للطلب (اختياري)</label><input type="number" id="couponMinOrder" placeholder="0"></div>
+      <div class="field"><label>عدد مرات الاستخدام (اختياري)</label><input type="number" id="couponUsageLimit" placeholder="بلا حدود"></div>
+    </div>
+    <div class="field"><label>تاريخ الانتهاء (اختياري)</label><input type="date" id="couponExpiresAt"></div>
+    <div class="checkbox-row"><input type="checkbox" id="couponActive" checked><label for="couponActive">الكوبون مفعل</label></div>
+    <div class="error-msg" id="couponModalError"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeCouponModal()">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveCoupon()">حفظ الكوبون</button>
+    </div>
+  </div>
 </div>
 
 <!-- Product Modal -->
@@ -133,8 +210,11 @@
   <div class="modal-box">
     <h3 id="productModalTitle">إضافة منتج</h3>
     <input type="hidden" id="prodId">
-    <img id="prodImgPreview" class="img-preview hidden" src="">
-    <div class="field"><label>صورة المنتج</label><input type="file" id="prodImageFile" accept="image/*"></div>
+    <div class="field">
+      <label>صور المنتج (تقدر تختار أكتر من صورة)</label>
+      <div class="img-manager" id="prodImgManager"></div>
+      <input type="file" id="prodImageFile" accept="image/*" multiple>
+    </div>
     <div class="field"><label>اسم المنتج</label><input type="text" id="prodName" placeholder="مثال: كاميرا خارجية 4K"></div>
     <div class="field"><label>الوصف</label><textarea id="prodDesc" rows="3" placeholder="وصف مختصر للمنتج"></textarea></div>
     <div class="grid2">
@@ -200,14 +280,23 @@ function switchTab(tab){
   document.getElementById('tab-'+tab).classList.add('active');
 }
 
+let coupons = [];
+let orders = [];
+
 async function loadAll(){
   const { data: catData } = await sb.from('categories').select('*').order('sort_order',{ascending:true});
   const { data: prodData } = await sb.from('products').select('*').order('created_at',{ascending:false});
+  const { data: couponData } = await sb.from('coupons').select('*').order('created_at',{ascending:false});
+  const { data: orderData } = await sb.from('orders').select('*').order('created_at',{ascending:false});
   categories = catData || [];
   products = prodData || [];
+  coupons = couponData || [];
+  orders = orderData || [];
   renderCategoriesTable();
   renderProductsTable();
   populateCategorySelect();
+  renderCouponsTable();
+  renderOrdersTable();
 }
 
 function renderProductsTable(){
@@ -216,7 +305,7 @@ function renderProductsTable(){
   if(products.length===0){ body.innerHTML = '<tr class="empty-row"><td colspan="7">لا توجد منتجات بعد. اضغط "إضافة منتج"</td></tr>'; return; }
   body.innerHTML = products.map(p => `
     <tr>
-      <td><img src="${p.image_url || 'https://placehold.co/80x80/10294f/9fb0d1?text=IMG'}"></td>
+      <td><img src="${(p.images && p.images[0]) || p.image_url || 'https://placehold.co/80x80/10294f/9fb0d1?text=IMG'}"></td>
       <td>${p.name}</td>
       <td>${p.category || '-'}</td>
       <td>${Number(p.price).toLocaleString('ar-EG')} ج.م</td>
@@ -250,11 +339,20 @@ function populateCategorySelect(){
 }
 
 /* ---------------- Product Modal ---------------- */
-let currentProdImageUrl = '';
+let currentProdImages = [];
+function renderProdImgManager(){
+  const el = document.getElementById('prodImgManager');
+  el.innerHTML = currentProdImages.map((url, i) => `
+    <div class="thumb-wrap">
+      <img src="${url}">
+      <button onclick="removeProdImage(${i})">×</button>
+    </div>`).join('');
+}
+function removeProdImage(i){ currentProdImages.splice(i,1); renderProdImgManager(); }
+
 function openProductModal(p){
   document.getElementById('productModalError').innerText = '';
   populateCategorySelect();
-  const preview = document.getElementById('prodImgPreview');
   document.getElementById('prodImageFile').value = '';
   if(p && p.id){
     document.getElementById('productModalTitle').innerText = 'تعديل منتج';
@@ -266,8 +364,7 @@ function openProductModal(p){
     document.getElementById('prodCategory').value = p.category || '';
     document.getElementById('prodStock').value = p.stock ?? 0;
     document.getElementById('prodFeatured').checked = !!p.featured;
-    currentProdImageUrl = p.image_url || '';
-    if(currentProdImageUrl){ preview.src = currentProdImageUrl; preview.classList.remove('hidden'); } else { preview.classList.add('hidden'); }
+    currentProdImages = (p.images && p.images.length) ? [...p.images] : (p.image_url ? [p.image_url] : []);
   } else {
     document.getElementById('productModalTitle').innerText = 'إضافة منتج';
     document.getElementById('prodId').value = '';
@@ -277,9 +374,9 @@ function openProductModal(p){
     document.getElementById('prodOldPrice').value = '';
     document.getElementById('prodStock').value = 0;
     document.getElementById('prodFeatured').checked = false;
-    currentProdImageUrl = '';
-    preview.classList.add('hidden');
+    currentProdImages = [];
   }
+  renderProdImgManager();
   document.getElementById('productModalOverlay').classList.add('open');
 }
 function closeProductModal(){ document.getElementById('productModalOverlay').classList.remove('open'); }
@@ -295,15 +392,16 @@ async function saveProduct(){
   saveBtn.disabled = true; saveBtn.innerText = 'جاري الحفظ...';
 
   try{
-    const file = document.getElementById('prodImageFile').files[0];
-    let imageUrl = currentProdImageUrl;
-    if(file){
-      const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g,'_')}`;
+    const files = Array.from(document.getElementById('prodImageFile').files || []);
+    const newUrls = [];
+    for(const file of files){
+      const fileName = `${Date.now()}_${Math.random().toString(36).slice(2,7)}_${file.name.replace(/[^a-zA-Z0-9.]/g,'_')}`;
       const { error: upErr } = await sb.storage.from('products').upload(fileName, file, { upsert:true });
       if(upErr) throw upErr;
       const { data: pub } = sb.storage.from('products').getPublicUrl(fileName);
-      imageUrl = pub.publicUrl;
+      newUrls.push(pub.publicUrl);
     }
+    const images = [...currentProdImages, ...newUrls];
 
     const payload = {
       name,
@@ -313,7 +411,8 @@ async function saveProduct(){
       category: document.getElementById('prodCategory').value,
       stock: parseInt(document.getElementById('prodStock').value) || 0,
       featured: document.getElementById('prodFeatured').checked,
-      image_url: imageUrl
+      images: images,
+      image_url: images[0] || null
     };
 
     const id = document.getElementById('prodId').value;
@@ -383,6 +482,149 @@ async function saveCategory(){
 async function deleteCategory(id){
   if(!confirm('حذف القسم لن يحذف المنتجات المرتبطة به لكنها ستحتاج لتصنيف جديد. متابعة؟')) return;
   const { error } = await sb.from('categories').delete().eq('id', id);
+  if(error){ alert('حدث خطأ أثناء الحذف'); console.error(error); return; }
+  await loadAll();
+}
+
+/* ---------------- Coupons ---------------- */
+function renderCouponsTable(){
+  const body = document.getElementById('couponsTableBody');
+  if(coupons.length===0){ body.innerHTML = '<tr class="empty-row"><td colspan="7">لا توجد كوبونات بعد.</td></tr>'; return; }
+  body.innerHTML = coupons.map(c => `
+    <tr>
+      <td><b>${c.code}</b></td>
+      <td>${c.discount_type === 'percent' ? 'نسبة %' : 'مبلغ ثابت'}</td>
+      <td>${c.discount_type === 'percent' ? c.discount_value + '%' : Number(c.discount_value).toLocaleString('ar-EG') + ' ج.م'}</td>
+      <td>${c.min_order ? Number(c.min_order).toLocaleString('ar-EG') + ' ج.م' : '-'}</td>
+      <td>${c.used_count || 0}${c.usage_limit ? ' / ' + c.usage_limit : ''}</td>
+      <td><span class="badge ${c.active?'on':'off'}">${c.active?'مفعل':'موقوف'}</span></td>
+      <td class="row-actions">
+        <button class="icon-btn edit" onclick='openCouponModal(${JSON.stringify(c).replace(/'/g,"&#39;")})'>✏️</button>
+        <button class="icon-btn danger" onclick="deleteCoupon('${c.id}')">🗑️</button>
+      </td>
+    </tr>`).join('');
+}
+
+function openCouponModal(c){
+  document.getElementById('couponModalError').innerText = '';
+  if(c && c.id){
+    document.getElementById('couponModalTitle').innerText = 'تعديل كوبون';
+    document.getElementById('couponId').value = c.id;
+    document.getElementById('couponCode').value = c.code || '';
+    document.getElementById('couponType').value = c.discount_type || 'percent';
+    document.getElementById('couponValue').value = c.discount_value || '';
+    document.getElementById('couponMinOrder').value = c.min_order || '';
+    document.getElementById('couponUsageLimit').value = c.usage_limit || '';
+    document.getElementById('couponExpiresAt').value = c.expires_at ? c.expires_at.slice(0,10) : '';
+    document.getElementById('couponActive').checked = c.active !== false;
+  } else {
+    document.getElementById('couponModalTitle').innerText = 'إضافة كوبون';
+    document.getElementById('couponId').value = '';
+    document.getElementById('couponCode').value = '';
+    document.getElementById('couponType').value = 'percent';
+    document.getElementById('couponValue').value = '';
+    document.getElementById('couponMinOrder').value = '';
+    document.getElementById('couponUsageLimit').value = '';
+    document.getElementById('couponExpiresAt').value = '';
+    document.getElementById('couponActive').checked = true;
+  }
+  document.getElementById('couponModalOverlay').classList.add('open');
+}
+function closeCouponModal(){ document.getElementById('couponModalOverlay').classList.remove('open'); }
+
+async function saveCoupon(){
+  const errEl = document.getElementById('couponModalError');
+  errEl.innerText = '';
+  const code = document.getElementById('couponCode').value.trim().toUpperCase();
+  const value = parseFloat(document.getElementById('couponValue').value);
+  if(!code || isNaN(value)){ errEl.innerText = 'برجاء إدخال الكود وقيمة الخصم'; return; }
+  const payload = {
+    code,
+    discount_type: document.getElementById('couponType').value,
+    discount_value: value,
+    min_order: document.getElementById('couponMinOrder').value ? parseFloat(document.getElementById('couponMinOrder').value) : 0,
+    usage_limit: document.getElementById('couponUsageLimit').value ? parseInt(document.getElementById('couponUsageLimit').value) : null,
+    expires_at: document.getElementById('couponExpiresAt').value || null,
+    active: document.getElementById('couponActive').checked
+  };
+  const id = document.getElementById('couponId').value;
+  let error;
+  if(id){ ({ error } = await sb.from('coupons').update(payload).eq('id', id)); }
+  else { ({ error } = await sb.from('coupons').insert(payload)); }
+  if(error){ errEl.innerText = 'حدث خطأ: ' + error.message; return; }
+  closeCouponModal();
+  await loadAll();
+}
+
+async function deleteCoupon(id){
+  if(!confirm('متأكد إنك عايز تحذف الكوبون ده؟')) return;
+  const { error } = await sb.from('coupons').delete().eq('id', id);
+  if(error){ alert('حدث خطأ أثناء الحذف'); console.error(error); return; }
+  await loadAll();
+}
+
+/* ---------------- Orders & Analytics ---------------- */
+const STATUS_LABELS = {
+  pending: 'قيد الانتظار',
+  pending_payment: 'في انتظار التحويل',
+  confirmed: 'مؤكد',
+  shipped: 'تم الشحن',
+  completed: 'مكتمل',
+  cancelled: 'ملغي'
+};
+const PAYMENT_LABELS = {
+  whatsapp_cod: '💬 عند الاستلام',
+  bank_transfer: '🏦 تحويل بنكي'
+};
+
+function renderOrdersTable(){
+  const filter = document.getElementById('orderStatusFilter') ? document.getElementById('orderStatusFilter').value : 'all';
+  const list = filter === 'all' ? orders : orders.filter(o => o.status === filter);
+
+  // stats always computed from all orders (not just filtered view)
+  const totalOrders = orders.length;
+  const totalRevenue = orders.reduce((s,o)=> s + Number(o.total||0), 0);
+  const avgOrder = totalOrders ? totalRevenue / totalOrders : 0;
+  const productCount = {};
+  orders.forEach(o => (o.items||[]).forEach(it => { productCount[it.name] = (productCount[it.name]||0) + it.qty; }));
+  let topProduct = '-';
+  let topQty = 0;
+  Object.keys(productCount).forEach(name => { if(productCount[name] > topQty){ topQty = productCount[name]; topProduct = name; } });
+
+  document.getElementById('statTotalOrders').innerText = totalOrders;
+  document.getElementById('statTotalRevenue').innerText = totalRevenue.toLocaleString('ar-EG') + ' ج.م';
+  document.getElementById('statAvgOrder').innerText = Math.round(avgOrder).toLocaleString('ar-EG') + ' ج.م';
+  document.getElementById('statTopProduct').innerText = topProduct;
+
+  const body = document.getElementById('ordersTableBody');
+  if(list.length===0){ body.innerHTML = '<tr class="empty-row"><td colspan="7">لا توجد طلبات مطابقة.</td></tr>'; return; }
+  body.innerHTML = list.map(o => `
+    <tr>
+      <td>${o.id.slice(0,8)}</td>
+      <td style="max-width:220px;">${(o.items||[]).map(it => `${it.name} × ${it.qty}`).join('، ')}</td>
+      <td>${Number(o.total).toLocaleString('ar-EG')} ج.م</td>
+      <td>${PAYMENT_LABELS[o.payment_method] || o.payment_method}</td>
+      <td>
+        <select class="status-select" onchange="updateOrderStatus('${o.id}', this.value)">
+          ${Object.keys(STATUS_LABELS).map(s => `<option value="${s}" ${o.status===s?'selected':''}>${STATUS_LABELS[s]}</option>`).join('')}
+        </select>
+      </td>
+      <td>${new Date(o.created_at).toLocaleDateString('ar-EG')}</td>
+      <td><button class="icon-btn danger" onclick="deleteOrder('${o.id}')">🗑️</button></td>
+    </tr>`).join('');
+}
+
+async function updateOrderStatus(id, status){
+  const { error } = await sb.from('orders').update({ status }).eq('id', id);
+  if(error){ alert('حدث خطأ أثناء تحديث الحالة'); console.error(error); return; }
+  const o = orders.find(x=>x.id===id);
+  if(o) o.status = status;
+  renderOrdersTable();
+}
+
+async function deleteOrder(id){
+  if(!confirm('حذف الطلب نهائيًا؟')) return;
+  const { error } = await sb.from('orders').delete().eq('id', id);
   if(error){ alert('حدث خطأ أثناء الحذف'); console.error(error); return; }
   await loadAll();
 }

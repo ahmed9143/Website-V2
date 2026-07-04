@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IT Solutions Pro | أنظمة المراقبة والشبكات وحلول تكنولوجيا المعلومات</title>
 <meta name="description" content="متجر متكامل لأنظمة المراقبة الأمنية، الشبكات، الكمبيوتر واللابتوبات، الطابعات، وحلول UPS. أفضل الأسعار وتوريد وتركيب في مصر.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="IT Solutions Pro | أنظمة المراقبة والشبكات وحلول تكنولوجيا المعلومات">
+<meta property="og:description" content="متجر متكامل لأنظمة المراقبة الأمنية، الشبكات، الكمبيوتر واللابتوبات، الطابعات، وحلول UPS.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -174,6 +177,53 @@
   .remove-item{color:var(--danger);font-size:12px;cursor:pointer;background:none;border:none;}
   .cart-foot{padding:20px;border-top:1px solid var(--line);}
   .cart-total-row{display:flex;justify-content:space-between;margin-bottom:14px;font-weight:700;}
+  .cart-total-row.discount{color:var(--ok);font-weight:600;font-size:13.5px;}
+  .cart-total-row.sub{color:var(--ink-soft);font-weight:600;font-size:13.5px;}
+
+  .coupon-row{display:flex;gap:8px;margin-bottom:14px;}
+  .coupon-row input{flex:1;background:var(--navy-800);border:1px solid var(--line);border-radius:8px;padding:9px 12px;color:var(--ink);font-family:'Cairo';font-size:13px;}
+  .coupon-row button{background:var(--navy-800);border:1px solid var(--line);color:var(--ink);padding:0 14px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;}
+  .coupon-msg{font-size:12.5px;margin-bottom:10px;min-height:14px;}
+  .coupon-msg.ok{color:var(--ok);}
+  .coupon-msg.err{color:var(--danger);}
+  .coupon-applied{display:flex;justify-content:space-between;align-items:center;background:#1fae6b1a;border:1px solid var(--ok);border-radius:8px;padding:8px 12px;margin-bottom:14px;font-size:13px;}
+  .coupon-applied button{background:none;border:none;color:var(--danger);cursor:pointer;font-size:12px;font-weight:700;}
+
+  .pay-methods{display:grid;gap:8px;margin-bottom:14px;}
+  .pay-option{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:9px;padding:10px 12px;cursor:pointer;font-size:13px;}
+  .pay-option.selected{border-color:var(--cable-orange);background:var(--cable-orange-dim);}
+  .pay-option input{width:auto;}
+
+  /* Product detail page */
+  .pd-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;}
+  .pd-gallery-main{aspect-ratio:1/1;background:var(--navy-800);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;border:1px solid var(--line);}
+  .pd-gallery-main img{width:100%;height:100%;object-fit:cover;}
+  .pd-thumbs{display:flex;gap:10px;flex-wrap:wrap;}
+  .pd-thumb{width:70px;height:70px;border-radius:8px;overflow:hidden;border:2px solid var(--line);cursor:pointer;flex-shrink:0;}
+  .pd-thumb.active{border-color:var(--cable-orange);}
+  .pd-thumb img{width:100%;height:100%;object-fit:cover;}
+  .pd-back{display:inline-flex;align-items:center;gap:6px;color:var(--ink-soft);font-size:13.5px;margin-bottom:20px;cursor:pointer;}
+  .pd-back:hover{color:var(--cable-orange);}
+  .pd-cat{color:var(--cable-blue);font-weight:700;font-size:12.5px;margin-bottom:8px;}
+  .pd-name{font-size:26px;font-weight:800;margin:0 0 14px;line-height:1.4;}
+  .pd-price-row{display:flex;align-items:baseline;gap:12px;margin-bottom:18px;}
+  .pd-price{font-family:'JetBrains Mono';font-size:28px;font-weight:800;color:var(--cable-orange);}
+  .pd-old{font-size:16px;color:var(--ink-soft);text-decoration:line-through;}
+  .pd-desc{color:var(--ink-soft);line-height:1.9;font-size:14.5px;margin-bottom:20px;}
+  .pd-stock{font-size:13.5px;margin-bottom:20px;font-weight:600;}
+  .pd-stock.in{color:var(--ok);}
+  .pd-stock.out{color:var(--danger);}
+  .pd-qty-row{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+  .pd-qty-row .qty-btn{width:34px;height:34px;font-size:16px;}
+
+  /* Bank transfer modal */
+  .pay-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;z-index:400;padding:20px;}
+  .pay-modal-overlay.open{display:flex;}
+  .pay-modal-box{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius);padding:28px;max-width:420px;width:100%;}
+  .pay-modal-box h3{margin:0 0 14px;font-size:18px;}
+  .bank-detail-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:13.5px;}
+  .bank-detail-row b{font-family:'JetBrains Mono';}
+  .copy-btn{background:var(--navy-800);border:1px solid var(--line);color:var(--ink);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;}
 
   @media(max-width:980px){
     .hero-inner{grid-template-columns:1fr;}
@@ -308,6 +358,14 @@
     </section>
   </div>
 
+  <!-- PRODUCT DETAIL -->
+  <div class="page-view" id="page-product-detail">
+    <section class="wrap">
+      <div class="pd-back" onclick="navigateTo('products')">→ رجوع لكل المنتجات</div>
+      <div class="pd-grid" id="pdContainer"></div>
+    </section>
+  </div>
+
   <!-- ABOUT -->
   <div class="page-view" id="page-about">
     <section class="wrap">
@@ -393,8 +451,37 @@
   <div class="cart-head"><h3 style="margin:0;">سلة المشتريات</h3><button id="closeCartBtn" style="background:none;border:none;font-size:22px;color:var(--ink);cursor:pointer;">×</button></div>
   <div class="cart-items" id="cartItemsContainer"></div>
   <div class="cart-foot">
+    <div id="couponAppliedBox"></div>
+    <div class="coupon-row" id="couponInputRow">
+      <input type="text" id="couponCodeInput" placeholder="عندك كود خصم؟">
+      <button onclick="applyCoupon()">تفعيل</button>
+    </div>
+    <div class="coupon-msg" id="couponMsg"></div>
+    <div class="cart-total-row sub" id="cartSubtotalRow" style="display:none;"><span>المجموع الفرعي</span><span id="cartSubtotalVal">0 ج.م</span></div>
+    <div class="cart-total-row discount" id="cartDiscountRow" style="display:none;"><span>الخصم</span><span id="cartDiscountVal">0 ج.م</span></div>
     <div class="cart-total-row"><span>الإجمالي</span><span id="cartDrawerTotal">0 ج.م</span></div>
-    <button class="btn btn-primary" style="width:100%;justify-content:center;" id="checkoutWhatsappBtn">إتمام الطلب عبر واتساب</button>
+    <div class="pay-methods">
+      <label class="pay-option selected" id="payOptWhatsapp">
+        <input type="radio" name="payMethod" value="whatsapp_cod" checked onchange="setPayMethod('whatsapp_cod')">
+        💬 الدفع عند الاستلام (تأكيد عبر واتساب)
+      </label>
+      <label class="pay-option" id="payOptBank">
+        <input type="radio" name="payMethod" value="bank_transfer" onchange="setPayMethod('bank_transfer')">
+        🏦 تحويل بنكي / إنستاباي
+      </label>
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;" id="checkoutWhatsappBtn">إتمام الطلب</button>
+  </div>
+</div>
+
+<!-- Bank Transfer Modal -->
+<div class="pay-modal-overlay" id="bankModalOverlay">
+  <div class="pay-modal-box">
+    <h3>بيانات التحويل البنكي</h3>
+    <div id="bankDetailsContainer"></div>
+    <p style="font-size:12.5px;color:var(--ink-soft);margin:14px 0;">بعد التحويل، اضغط الزر تحت وابعت لنا صورة إيصال التحويل على واتساب مع رقم طلبك لتأكيد الشحن.</p>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="confirmBankOrder()">تم التحويل، تأكيد الطلب</button>
+    <button class="btn btn-outline" style="width:100%;justify-content:center;margin-top:8px;" onclick="closeBankModal()">إلغاء</button>
   </div>
 </div>
 
@@ -404,6 +491,9 @@ let products = [];
 let categories = [];
 let cart = JSON.parse(localStorage.getItem('it_pro_cart') || '{}');
 let currentCategoryFilter = 'الكل';
+let appliedCoupon = null;
+let currentPayMethod = 'whatsapp_cod';
+const DEFAULT_TITLE = "IT Solutions Pro | أنظمة المراقبة والشبكات وحلول تكنولوجيا المعلومات";
 
 const CAT_ICONS = {'كاميرات مراقبة':'📷','أنظمة أمنية':'🛡️','كمبيوتر ولابتوبات':'💻','طابعات':'🖨️','شبكات':'🌐','UPS وحلول الطاقة':'🔋','حلول IT متكاملة':'🖥️'};
 
@@ -421,6 +511,7 @@ async function loadData(){
   renderFilters();
   renderFeatured();
   renderProducts();
+  handleHashRoute();
 }
 
 function renderCatGrid(){
@@ -441,11 +532,12 @@ function renderFilters(){
 
 function productCardHTML(p){
   const discount = p.old_price && p.old_price > p.price;
+  const cover = (p.images && p.images.length) ? p.images[0] : (p.image_url || 'https://placehold.co/400x400/10294f/9fb0d1?text=No+Image');
   const badge = discount ? `<div class="prod-badge">خصم ${Math.round(100-(p.price/p.old_price*100))}%</div>` : (p.stock>0 ? `<div class="prod-badge stock">متوفر</div>` : `<div class="prod-badge" style="background:var(--danger);">غير متوفر</div>`);
   return `
-    <div class="prod-card">
+    <div class="prod-card" onclick="openProductDetail('${p.id}')" style="cursor:pointer;">
       <div class="prod-thumb">
-        <img src="${p.image_url || 'https://placehold.co/400x400/10294f/9fb0d1?text=No+Image'}" alt="${p.name}" loading="lazy">
+        <img src="${cover}" alt="${p.name}" loading="lazy">
         ${badge}
       </div>
       <div class="prod-body">
@@ -455,10 +547,95 @@ function productCardHTML(p){
           <span class="prod-price">${Number(p.price).toLocaleString('ar-EG')} ج.م</span>
           ${discount ? `<span class="prod-old">${Number(p.old_price).toLocaleString('ar-EG')} ج.م</span>` : ''}
         </div>
-        <button class="add-btn" onclick="addToCart('${p.id}', this)">🛒 أضف للسلة</button>
+        <button class="add-btn" onclick="event.stopPropagation(); addToCart('${p.id}', this)">🛒 أضف للسلة</button>
       </div>
     </div>`;
 }
+
+function openProductDetail(id){
+  location.hash = 'product-' + id;
+}
+
+function renderProductDetail(id){
+  const p = products.find(x => String(x.id) === String(id));
+  if(!p){ navigateTo('products'); return; }
+  const images = (p.images && p.images.length) ? p.images : (p.image_url ? [p.image_url] : ['https://placehold.co/600x600/10294f/9fb0d1?text=No+Image']);
+  const discount = p.old_price && p.old_price > p.price;
+  const el = document.getElementById('pdContainer');
+  el.innerHTML = `
+    <div>
+      <div class="pd-gallery-main"><img id="pdMainImg" src="${images[0]}" alt="${p.name}"></div>
+      <div class="pd-thumbs">${images.map((img,i)=>`<div class="pd-thumb ${i===0?'active':''}" onclick="pdSelectImage(${i})"><img src="${img}" alt="${p.name} ${i+1}"></div>`).join('')}</div>
+    </div>
+    <div>
+      <div class="pd-cat">${p.category || ''}</div>
+      <h1 class="pd-name">${p.name}</h1>
+      <div class="pd-price-row">
+        <span class="pd-price">${Number(p.price).toLocaleString('ar-EG')} ج.م</span>
+        ${discount ? `<span class="pd-old">${Number(p.old_price).toLocaleString('ar-EG')} ج.م</span>` : ''}
+      </div>
+      <div class="pd-stock ${p.stock>0?'in':'out'}">${p.stock>0 ? '✓ متوفر بالمخزون' : '✕ غير متوفر حاليًا'}</div>
+      <p class="pd-desc">${p.description || 'لا يوجد وصف تفصيلي لهذا المنتج حاليًا. تواصل معنا لمزيد من التفاصيل.'}</p>
+      <div class="pd-qty-row">
+        <button class="qty-btn" onclick="pdChangeQty(-1)">-</button>
+        <span id="pdQtyVal">1</span>
+        <button class="qty-btn" onclick="pdChangeQty(1)">+</button>
+      </div>
+      <button class="btn btn-primary" onclick="pdAddToCart('${p.id}')">🛒 أضف للسلة</button>
+    </div>`;
+  window._pdImages = images; window._pdQty = 1;
+  document.title = `${p.name} | IT Solutions Pro`;
+  injectProductJsonLd(p, images);
+  document.querySelectorAll('.page-view').forEach(v=>v.classList.remove('active-page'));
+  document.getElementById('page-product-detail').classList.add('active-page');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function pdSelectImage(i){
+  document.getElementById('pdMainImg').src = window._pdImages[i];
+  document.querySelectorAll('.pd-thumb').forEach((t,idx)=>t.classList.toggle('active', idx===i));
+}
+function pdChangeQty(delta){
+  window._pdQty = Math.max(1, (window._pdQty||1)+delta);
+  document.getElementById('pdQtyVal').innerText = window._pdQty;
+}
+function pdAddToCart(id){
+  cart[id] = (cart[id]||0) + (window._pdQty||1);
+  saveCartAndRefresh();
+  const drawer=document.getElementById('cartDrawer'), overlay=document.getElementById('cartOverlay');
+  drawer.classList.add('open'); overlay.classList.add('open');
+}
+
+function injectProductJsonLd(p, images){
+  let tag = document.getElementById('productJsonLd');
+  if(!tag){ tag = document.createElement('script'); tag.type='application/ld+json'; tag.id='productJsonLd'; document.head.appendChild(tag); }
+  tag.textContent = JSON.stringify({
+    "@context":"https://schema.org",
+    "@type":"Product",
+    "name": p.name,
+    "description": p.description || p.name,
+    "image": images,
+    "offers": {
+      "@type":"Offer",
+      "priceCurrency":"EGP",
+      "price": p.price,
+      "availability": p.stock>0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+    }
+  });
+}
+function removeProductJsonLd(){
+  const tag = document.getElementById('productJsonLd');
+  if(tag) tag.remove();
+}
+
+function handleHashRoute(){
+  const h = location.hash;
+  if(h.startsWith('#product-')){
+    const id = h.replace('#product-','');
+    if(products.length) renderProductDetail(id);
+  }
+}
+window.addEventListener('hashchange', handleHashRoute);
 
 function renderFeatured(){
   const el = document.getElementById('featuredGrid');
@@ -497,6 +674,9 @@ function executeSearch(){
 }
 
 function navigateTo(page){
+  if(location.hash) history.replaceState(null, '', location.pathname + location.search);
+  removeProductJsonLd();
+  document.title = DEFAULT_TITLE;
   document.querySelectorAll('.page-view').forEach(p=>p.classList.remove('active-page'));
   document.getElementById('page-'+page).classList.add('active-page');
   document.querySelectorAll('.catnav a').forEach(a=>a.classList.toggle('active', a.dataset.page===page));
@@ -517,16 +697,70 @@ function changeQty(id, delta){
 function removeFromCart(id){ delete cart[id]; saveCartAndRefresh(); }
 function saveCartAndRefresh(){ localStorage.setItem('it_pro_cart', JSON.stringify(cart)); updateCartUI(); }
 
-function updateCartUI(){
-  let totalCount=0, totalPrice=0;
-  const container = document.getElementById('cartItemsContainer');
+function calcTotals(){
+  let subtotal = 0;
   Object.keys(cart).forEach(id=>{
     const p = products.find(x=>x.id==id);
-    if(p){ totalCount+=cart[id]; totalPrice += p.price*cart[id]; }
+    if(p) subtotal += p.price*cart[id];
   });
+  let discount = 0;
+  if(appliedCoupon && subtotal >= (appliedCoupon.min_order || 0)){
+    discount = appliedCoupon.discount_type === 'percent' ? subtotal * (appliedCoupon.discount_value/100) : appliedCoupon.discount_value;
+    if(discount > subtotal) discount = subtotal;
+  }
+  return { subtotal, discount, total: subtotal - discount };
+}
+
+async function applyCoupon(){
+  const codeInput = document.getElementById('couponCodeInput');
+  const msgEl = document.getElementById('couponMsg');
+  const code = codeInput.value.trim();
+  msgEl.innerText = ''; msgEl.className = 'coupon-msg';
+  if(!code) return;
+  const { data, error } = await sb.from('coupons').select('*').ilike('code', code).maybeSingle();
+  if(error || !data){ msgEl.innerText = 'الكود غير موجود'; msgEl.classList.add('err'); return; }
+  if(!data.active){ msgEl.innerText = 'الكود غير مفعل حاليًا'; msgEl.classList.add('err'); return; }
+  if(data.expires_at && new Date(data.expires_at) < new Date()){ msgEl.innerText = 'الكود منتهي الصلاحية'; msgEl.classList.add('err'); return; }
+  if(data.usage_limit && data.used_count >= data.usage_limit){ msgEl.innerText = 'تم استخدام الكود بالكامل'; msgEl.classList.add('err'); return; }
+  const { subtotal } = calcTotals();
+  if(data.min_order && subtotal < data.min_order){ msgEl.innerText = `الحد الأدنى للطلب ${Number(data.min_order).toLocaleString('ar-EG')} ج.م`; msgEl.classList.add('err'); return; }
+  appliedCoupon = data;
+  msgEl.innerText = 'تم تفعيل الكود بنجاح!'; msgEl.classList.add('ok');
+  codeInput.value = '';
+  updateCartUI();
+}
+function removeCoupon(){ appliedCoupon = null; updateCartUI(); }
+
+function setPayMethod(method){
+  currentPayMethod = method;
+  document.getElementById('payOptWhatsapp').classList.toggle('selected', method==='whatsapp_cod');
+  document.getElementById('payOptBank').classList.toggle('selected', method==='bank_transfer');
+}
+
+function updateCartUI(){
+  let totalCount=0;
+  Object.keys(cart).forEach(id=>{ totalCount += cart[id]; });
+  const { subtotal, discount, total } = calcTotals();
+  const container = document.getElementById('cartItemsContainer');
+
   document.getElementById('cartCountBadge').innerText = totalCount;
-  document.getElementById('cartTotalHeader').innerText = totalPrice.toLocaleString('ar-EG')+' ج.م';
-  document.getElementById('cartDrawerTotal').innerText = totalPrice.toLocaleString('ar-EG')+' ج.م';
+  document.getElementById('cartTotalHeader').innerText = total.toLocaleString('ar-EG')+' ج.م';
+  document.getElementById('cartDrawerTotal').innerText = total.toLocaleString('ar-EG')+' ج.م';
+  document.getElementById('cartSubtotalRow').style.display = discount>0 ? 'flex' : 'none';
+  document.getElementById('cartSubtotalVal').innerText = subtotal.toLocaleString('ar-EG')+' ج.م';
+  document.getElementById('cartDiscountRow').style.display = discount>0 ? 'flex' : 'none';
+  document.getElementById('cartDiscountVal').innerText = '- '+discount.toLocaleString('ar-EG')+' ج.م';
+
+  const couponBox = document.getElementById('couponAppliedBox');
+  const couponRow = document.getElementById('couponInputRow');
+  if(appliedCoupon){
+    couponBox.innerHTML = `<div class="coupon-applied"><span>✓ كود "${appliedCoupon.code}" مفعل</span><button onclick="removeCoupon()">إلغاء</button></div>`;
+    couponRow.style.display = 'none';
+  } else {
+    couponBox.innerHTML = '';
+    couponRow.style.display = 'flex';
+  }
+
   if(totalCount===0){
     container.innerHTML = '<div class="cart-empty-msg">سلة المشتريات فارغة حالياً.</div>';
   } else {
@@ -549,17 +783,86 @@ function updateCartUI(){
   }
 }
 
-function checkoutViaWhatsApp(){
+function buildItemsPayload(){
+  return Object.keys(cart).map(id=>{
+    const p = products.find(x=>x.id==id);
+    return p ? { product_id: p.id, name: p.name, price: p.price, qty: cart[id] } : null;
+  }).filter(Boolean);
+}
+
+async function createOrderRecord(paymentMethod, status){
+  const { subtotal, discount, total } = calcTotals();
+  const payload = {
+    items: buildItemsPayload(),
+    subtotal, discount, total,
+    coupon_code: appliedCoupon ? appliedCoupon.code : null,
+    payment_method: paymentMethod,
+    status
+  };
+  const { error } = await sb.from('orders').insert(payload);
+  if(error) console.error('order insert error', error);
+  if(!error && appliedCoupon){
+    sb.from('coupons').update({ used_count: (appliedCoupon.used_count||0) + 1 }).eq('id', appliedCoupon.id).then(()=>{});
+  }
+  return 'ORD-' + Date.now().toString(36).toUpperCase();
+}
+
+function clearCartAfterOrder(){
+  cart = {}; appliedCoupon = null;
+  localStorage.setItem('it_pro_cart', '{}');
+  updateCartUI();
+  document.getElementById('cartDrawer').classList.remove('open');
+  document.getElementById('cartOverlay').classList.remove('open');
+}
+
+function startCheckout(){
   const keys = Object.keys(cart);
   if(keys.length===0) return alert('برجاء إضافة منتجات للسلة أولاً!');
+  if(currentPayMethod === 'bank_transfer'){ openBankModal(); }
+  else { completeWhatsappOrder(); }
+}
+
+async function completeWhatsappOrder(){
+  const orderRef = await createOrderRecord('whatsapp_cod', 'pending');
+  const { discount, total } = calcTotals();
   let msg = "🛒 *طلب جديد - IT Solutions Pro*\n-------------------------\n\n";
-  let total = 0;
-  keys.forEach(id=>{
-    const p = products.find(x=>x.id==id);
-    if(p){ const qty=cart[id]; total += p.price*qty; msg += `▪️ *${p.name}*\n   العدد: ${qty} | إجمالي: ${(p.price*qty).toLocaleString('ar-EG')} ج.م\n\n`; }
+  buildItemsPayload().forEach(it=>{
+    msg += `▪️ *${it.name}*\n   العدد: ${it.qty} | إجمالي: ${(it.price*it.qty).toLocaleString('ar-EG')} ج.م\n\n`;
   });
   msg += "-------------------------\n";
-  msg += `💰 *الإجمالي:* ${total.toLocaleString('ar-EG')} ج.م\n\nبرجاء تأكيد الطلب وتحديد ميعاد التسليم/التركيب المناسب.`;
+  if(discount>0) msg += `الخصم${appliedCoupon?' ('+appliedCoupon.code+')':''}: -${discount.toLocaleString('ar-EG')} ج.م\n`;
+  msg += `💰 *الإجمالي:* ${total.toLocaleString('ar-EG')} ج.م\n🔖 *مرجع الطلب:* ${orderRef}\n`;
+  msg += `\nبرجاء تأكيد الطلب وتحديد ميعاد التسليم/التركيب المناسب.`;
+  clearCartAfterOrder();
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function openBankModal(){
+  const b = BANK_DETAILS;
+  document.getElementById('bankDetailsContainer').innerHTML = `
+    <div class="bank-detail-row"><span>البنك</span><b>${b.bankName}</b></div>
+    <div class="bank-detail-row"><span>اسم الحساب</span><b>${b.accountName}</b></div>
+    <div class="bank-detail-row"><span>رقم الحساب</span><b>${b.accountNumber}</b><button class="copy-btn" onclick="navigator.clipboard.writeText('${b.accountNumber}')">نسخ</button></div>
+    <div class="bank-detail-row"><span>IBAN</span><b>${b.iban}</b><button class="copy-btn" onclick="navigator.clipboard.writeText('${b.iban}')">نسخ</button></div>
+    <div class="bank-detail-row"><span>إنستاباي</span><b>${b.instapayHandle}</b></div>
+    <div class="bank-detail-row"><span>فودافون كاش</span><b>${b.vodafoneCash}</b></div>`;
+  document.getElementById('bankModalOverlay').classList.add('open');
+}
+function closeBankModal(){ document.getElementById('bankModalOverlay').classList.remove('open'); }
+
+async function confirmBankOrder(){
+  const orderRef = await createOrderRecord('bank_transfer', 'pending_payment');
+  const { discount, total } = calcTotals();
+  let msg = "🏦 *طلب جديد (تحويل بنكي) - IT Solutions Pro*\n-------------------------\n\n";
+  buildItemsPayload().forEach(it=>{
+    msg += `▪️ *${it.name}*\n   العدد: ${it.qty} | إجمالي: ${(it.price*it.qty).toLocaleString('ar-EG')} ج.م\n\n`;
+  });
+  msg += "-------------------------\n";
+  if(discount>0) msg += `الخصم: -${discount.toLocaleString('ar-EG')} ج.م\n`;
+  msg += `💰 *الإجمالي:* ${total.toLocaleString('ar-EG')} ج.م\n🔖 *مرجع الطلب:* ${orderRef}\n`;
+  msg += `\nتم التحويل، مرفق صورة الإيصال. برجاء تأكيد الطلب.`;
+  closeBankModal();
+  clearCartAfterOrder();
   window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
@@ -594,7 +897,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   document.getElementById('cartTriggerBtn').addEventListener('click', ()=>{ drawer.classList.add('open'); overlay.classList.add('open'); });
   document.getElementById('closeCartBtn').addEventListener('click', ()=>{ drawer.classList.remove('open'); overlay.classList.remove('open'); });
   overlay.addEventListener('click', ()=>{ drawer.classList.remove('open'); overlay.classList.remove('open'); });
-  document.getElementById('checkoutWhatsappBtn').addEventListener('click', checkoutViaWhatsApp);
+  document.getElementById('checkoutWhatsappBtn').addEventListener('click', startCheckout);
   document.getElementById('menuToggle').addEventListener('click', ()=>{ document.getElementById('catNavMenu').classList.toggle('mobile-open'); });
 });
 
