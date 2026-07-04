@@ -7,9 +7,9 @@
       مثال مصر: 201032641038
    ========================================================= */
 
-const SUPABASE_URL = "https://jllqgwdaistvbemoyxau.supabase.co";
+const SUPABASE_URL = "https://jauawivppggldbnemljv.supabase.co";
 
-const SUPABASE_ANON_KEY = "sb_publishable_hK-twI2WLlWEl9cKmJRFhg__HNIpZq7";
+const SUPABASE_ANON_KEY = "sb_publishable_eDn9PSJgWQJp-YF5OP8E4A_R6pG96Xe";
 
 const WHATSAPP_NUMBER = "201032641038";
 
