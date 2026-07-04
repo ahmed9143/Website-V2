@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم | IT Solutions Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --navy-950:#050d18;--navy-900:#0b1e3d;--navy-800:#10294f;--navy-700:#173a6b;
+    --cable-blue:#2f6fed;--cable-orange:#ff7a2f;--paper:#081525;--paper-2:#0b1e3d;
+    --ink:#f4f6f9;--ink-soft:#9fb0d1;--line:#173a6b;--ok:#1fae6b;--danger:#ff5c5c;--radius:12px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Cairo',sans-serif;}
+  button,input,select,textarea{font-family:'Cairo',sans-serif;}
+  .hidden{display:none !important;}
+
+  /* Login */
+  #loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .login-card{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius);padding:40px;width:100%;max-width:380px;}
+  .login-card h1{font-size:20px;margin:0 0 6px;}
+  .login-card p{color:var(--ink-soft);font-size:13.5px;margin:0 0 24px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:13px;margin-bottom:6px;font-weight:600;}
+  .field input, .field select, .field textarea{width:100%;background:var(--navy-800);border:1px solid var(--line);border-radius:8px;padding:10px 12px;color:var(--ink);outline:none;font-size:14px;}
+  .field textarea{resize:vertical;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;border:none;transition:.2s;}
+  .btn-primary{background:var(--cable-orange);color:#fff;}
+  .btn-primary:hover{filter:brightness(1.08);}
+  .btn-outline{background:transparent;color:var(--ink);border:1px solid var(--line);}
+  .btn-danger{background:var(--danger);color:#fff;}
+  .btn-block{width:100%;}
+  .error-msg{color:var(--danger);font-size:13px;margin-top:10px;min-height:16px;}
+
+  /* Layout */
+  #adminApp{display:grid;grid-template-columns:240px 1fr;min-height:100vh;}
+  aside{background:var(--navy-950);border-left:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column;}
+  aside .brand{display:flex;align-items:center;gap:10px;margin-bottom:30px;padding:0 6px;}
+  aside .brand .mark{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--cable-blue),var(--cable-orange));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff;}
+  aside .brand b{font-size:15px;}
+  aside .brand small{display:block;color:var(--ink-soft);font-size:10.5px;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:8px;color:var(--ink-soft);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:4px;transition:.2s;}
+  .nav-item:hover{background:var(--navy-800);color:var(--ink);}
+  .nav-item.active{background:var(--cable-orange);color:#fff;}
+  aside .logout{margin-top:auto;}
+  main.content{padding:30px 34px;overflow-x:auto;}
+  .topline{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px;flex-wrap:wrap;gap:12px;}
+  .topline h2{margin:0;font-size:22px;}
+  .topline p{margin:4px 0 0;color:var(--ink-soft);font-size:13.5px;}
+
+  .tab-view{display:none;}
+  .tab-view.active{display:block;}
+
+  table{width:100%;border-collapse:collapse;background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+  th,td{padding:12px 14px;text-align:right;font-size:13.5px;border-bottom:1px solid var(--line);}
+  th{background:var(--navy-800);color:var(--ink-soft);font-weight:700;font-size:12.5px;}
+  tr:last-child td{border-bottom:none;}
+  td img{width:42px;height:42px;object-fit:cover;border-radius:6px;background:var(--navy-800);}
+  .row-actions{display:flex;gap:8px;}
+  .icon-btn{background:var(--navy-800);border:1px solid var(--line);color:var(--ink);width:32px;height:32px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;}
+  .icon-btn.danger:hover{background:var(--danger);border-color:var(--danger);}
+  .icon-btn.edit:hover{background:var(--cable-blue);border-color:var(--cable-blue);}
+  .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:700;}
+  .badge.on{background:#1fae6b33;color:var(--ok);}
+  .badge.off{background:#ff5c5c33;color:var(--danger);}
+  .empty-row td{text-align:center;color:var(--ink-soft);padding:40px;}
+
+  /* Modal */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:300;padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal-box{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius);padding:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
+  .modal-box h3{margin:0 0 20px;font-size:18px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:10px;}
+  .img-preview{width:100%;height:140px;object-fit:cover;border-radius:8px;background:var(--navy-800);margin-bottom:10px;}
+  .checkbox-row{display:flex;align-items:center;gap:8px;margin:10px 0;}
+  .checkbox-row input{width:auto;}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <div class="login-card">
+    <h1>لوحة تحكم IT Solutions Pro</h1>
+    <p>سجل دخولك لإدارة المنتجات والأقسام</p>
+    <div class="field"><label>البريد الإلكتروني</label><input type="email" id="loginEmail" placeholder="admin@example.com"></div>
+    <div class="field"><label>كلمة المرور</label><input type="password" id="loginPassword" placeholder="••••••••"></div>
+    <button class="btn btn-primary btn-block" onclick="doLogin()">تسجيل الدخول</button>
+    <div class="error-msg" id="loginError"></div>
+  </div>
+</div>
+
+<div id="adminApp" class="hidden">
+  <aside>
+    <div class="brand">
+      <div class="mark">IT</div>
+      <div><b>IT Solutions</b><small>لوحة التحكم</small></div>
+    </div>
+    <div class="nav-item active" data-tab="products" onclick="switchTab('products')">📦 المنتجات</div>
+    <div class="nav-item" data-tab="categories" onclick="switchTab('categories')">🗂️ الأقسام</div>
+    <div class="nav-item logout" onclick="doLogout()">🚪 تسجيل الخروج</div>
+  </aside>
+
+  <main class="content">
+    <div class="tab-view active" id="tab-products">
+      <div class="topline">
+        <div><h2>المنتجات</h2><p id="prodCountLabel">جاري التحميل...</p></div>
+        <button class="btn btn-primary" onclick="openProductModal()">+ إضافة منتج</button>
+      </div>
+      <table>
+        <thead><tr><th>صورة</th><th>الاسم</th><th>القسم</th><th>السعر</th><th>المخزون</th><th>مميز</th><th>إجراءات</th></tr></thead>
+        <tbody id="productsTableBody"><tr class="empty-row"><td colspan="7">جاري التحميل...</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="tab-view" id="tab-categories">
+      <div class="topline">
+        <div><h2>الأقسام</h2><p>الأقسام التي تظهر في الموقع وفي فلاتر المنتجات</p></div>
+        <button class="btn btn-primary" onclick="openCategoryModal()">+ إضافة قسم</button>
+      </div>
+      <table>
+        <thead><tr><th>الأيقونة</th><th>الاسم</th><th>الترتيب</th><th>إجراءات</th></tr></thead>
+        <tbody id="categoriesTableBody"><tr class="empty-row"><td colspan="4">جاري التحميل...</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!-- Product Modal -->
+<div class="modal-overlay" id="productModalOverlay">
+  <div class="modal-box">
+    <h3 id="productModalTitle">إضافة منتج</h3>
+    <input type="hidden" id="prodId">
+    <img id="prodImgPreview" class="img-preview hidden" src="">
+    <div class="field"><label>صورة المنتج</label><input type="file" id="prodImageFile" accept="image/*"></div>
+    <div class="field"><label>اسم المنتج</label><input type="text" id="prodName" placeholder="مثال: كاميرا خارجية 4K"></div>
+    <div class="field"><label>الوصف</label><textarea id="prodDesc" rows="3" placeholder="وصف مختصر للمنتج"></textarea></div>
+    <div class="grid2">
+      <div class="field"><label>السعر (ج.م)</label><input type="number" id="prodPrice" placeholder="1500"></div>
+      <div class="field"><label>السعر قبل الخصم (اختياري)</label><input type="number" id="prodOldPrice" placeholder="1800"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>القسم</label><select id="prodCategory"></select></div>
+      <div class="field"><label>الكمية بالمخزون</label><input type="number" id="prodStock" placeholder="10"></div>
+    </div>
+    <div class="checkbox-row"><input type="checkbox" id="prodFeatured"><label for="prodFeatured">إظهار كمنتج مميز في الرئيسية</label></div>
+    <div class="error-msg" id="productModalError"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeProductModal()">إلغاء</button>
+      <button class="btn btn-primary" id="saveProductBtn" onclick="saveProduct()">حفظ المنتج</button>
+    </div>
+  </div>
+</div>
+
+<!-- Category Modal -->
+<div class="modal-overlay" id="categoryModalOverlay">
+  <div class="modal-box">
+    <h3 id="categoryModalTitle">إضافة قسم</h3>
+    <input type="hidden" id="catId">
+    <div class="field"><label>اسم القسم</label><input type="text" id="catName" placeholder="مثال: كاميرات مراقبة"></div>
+    <div class="field"><label>أيقونة (إيموجي)</label><input type="text" id="catIcon" placeholder="📷"></div>
+    <div class="field"><label>ترتيب الظهور</label><input type="number" id="catSort" placeholder="1"></div>
+    <div class="error-msg" id="categoryModalError"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeCategoryModal()">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveCategory()">حفظ القسم</button>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script>
+let categories = [];
+let products = [];
+
+async function checkSession(){
+  const { data } = await sb.auth.getSession();
+  if(data.session){ showApp(); } else { showLogin(); }
+}
+function showLogin(){ document.getElementById('loginScreen').classList.remove('hidden'); document.getElementById('adminApp').classList.add('hidden'); }
+function showApp(){ document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('adminApp').classList.remove('hidden'); loadAll(); }
+
+async function doLogin(){
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  errEl.innerText = '';
+  if(!email || !password){ errEl.innerText = 'برجاء إدخال البريد وكلمة المرور'; return; }
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if(error){ errEl.innerText = 'بيانات الدخول غير صحيحة'; return; }
+  showApp();
+}
+async function doLogout(){ await sb.auth.signOut(); showLogin(); }
+
+function switchTab(tab){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.tab===tab));
+  document.querySelectorAll('.tab-view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+}
+
+async function loadAll(){
+  const { data: catData } = await sb.from('categories').select('*').order('sort_order',{ascending:true});
+  const { data: prodData } = await sb.from('products').select('*').order('created_at',{ascending:false});
+  categories = catData || [];
+  products = prodData || [];
+  renderCategoriesTable();
+  renderProductsTable();
+  populateCategorySelect();
+}
+
+function renderProductsTable(){
+  const body = document.getElementById('productsTableBody');
+  document.getElementById('prodCountLabel').innerText = `${products.length} منتج`;
+  if(products.length===0){ body.innerHTML = '<tr class="empty-row"><td colspan="7">لا توجد منتجات بعد. اضغط "إضافة منتج"</td></tr>'; return; }
+  body.innerHTML = products.map(p => `
+    <tr>
+      <td><img src="${p.image_url || 'https://placehold.co/80x80/10294f/9fb0d1?text=IMG'}"></td>
+      <td>${p.name}</td>
+      <td>${p.category || '-'}</td>
+      <td>${Number(p.price).toLocaleString('ar-EG')} ج.م</td>
+      <td>${p.stock ?? 0}</td>
+      <td><span class="badge ${p.featured?'on':'off'}">${p.featured?'مميز':'عادي'}</span></td>
+      <td class="row-actions">
+        <button class="icon-btn edit" onclick='openProductModal(${JSON.stringify(p).replace(/'/g,"&#39;")})'>✏️</button>
+        <button class="icon-btn danger" onclick="deleteProduct('${p.id}')">🗑️</button>
+      </td>
+    </tr>`).join('');
+}
+
+function renderCategoriesTable(){
+  const body = document.getElementById('categoriesTableBody');
+  if(categories.length===0){ body.innerHTML = '<tr class="empty-row"><td colspan="4">لا توجد أقسام بعد.</td></tr>'; return; }
+  body.innerHTML = categories.map(c => `
+    <tr>
+      <td style="font-size:20px;">${c.icon || '📦'}</td>
+      <td>${c.name}</td>
+      <td>${c.sort_order ?? 0}</td>
+      <td class="row-actions">
+        <button class="icon-btn edit" onclick='openCategoryModal(${JSON.stringify(c).replace(/'/g,"&#39;")})'>✏️</button>
+        <button class="icon-btn danger" onclick="deleteCategory('${c.id}')">🗑️</button>
+      </td>
+    </tr>`).join('');
+}
+
+function populateCategorySelect(){
+  const sel = document.getElementById('prodCategory');
+  sel.innerHTML = categories.map(c => `<option value="${c.name}">${c.name}</option>`).join('') || '<option value="">أضف قسم أولاً</option>';
+}
+
+/* ---------------- Product Modal ---------------- */
+let currentProdImageUrl = '';
+function openProductModal(p){
+  document.getElementById('productModalError').innerText = '';
+  populateCategorySelect();
+  const preview = document.getElementById('prodImgPreview');
+  document.getElementById('prodImageFile').value = '';
+  if(p && p.id){
+    document.getElementById('productModalTitle').innerText = 'تعديل منتج';
+    document.getElementById('prodId').value = p.id;
+    document.getElementById('prodName').value = p.name || '';
+    document.getElementById('prodDesc').value = p.description || '';
+    document.getElementById('prodPrice').value = p.price || '';
+    document.getElementById('prodOldPrice').value = p.old_price || '';
+    document.getElementById('prodCategory').value = p.category || '';
+    document.getElementById('prodStock').value = p.stock ?? 0;
+    document.getElementById('prodFeatured').checked = !!p.featured;
+    currentProdImageUrl = p.image_url || '';
+    if(currentProdImageUrl){ preview.src = currentProdImageUrl; preview.classList.remove('hidden'); } else { preview.classList.add('hidden'); }
+  } else {
+    document.getElementById('productModalTitle').innerText = 'إضافة منتج';
+    document.getElementById('prodId').value = '';
+    document.getElementById('prodName').value = '';
+    document.getElementById('prodDesc').value = '';
+    document.getElementById('prodPrice').value = '';
+    document.getElementById('prodOldPrice').value = '';
+    document.getElementById('prodStock').value = 0;
+    document.getElementById('prodFeatured').checked = false;
+    currentProdImageUrl = '';
+    preview.classList.add('hidden');
+  }
+  document.getElementById('productModalOverlay').classList.add('open');
+}
+function closeProductModal(){ document.getElementById('productModalOverlay').classList.remove('open'); }
+
+async function saveProduct(){
+  const errEl = document.getElementById('productModalError');
+  errEl.innerText = '';
+  const name = document.getElementById('prodName').value.trim();
+  const price = parseFloat(document.getElementById('prodPrice').value);
+  if(!name || isNaN(price)){ errEl.innerText = 'برجاء إدخال اسم المنتج والسعر على الأقل'; return; }
+
+  const saveBtn = document.getElementById('saveProductBtn');
+  saveBtn.disabled = true; saveBtn.innerText = 'جاري الحفظ...';
+
+  try{
+    const file = document.getElementById('prodImageFile').files[0];
+    let imageUrl = currentProdImageUrl;
+    if(file){
+      const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g,'_')}`;
+      const { error: upErr } = await sb.storage.from('products').upload(fileName, file, { upsert:true });
+      if(upErr) throw upErr;
+      const { data: pub } = sb.storage.from('products').getPublicUrl(fileName);
+      imageUrl = pub.publicUrl;
+    }
+
+    const payload = {
+      name,
+      description: document.getElementById('prodDesc').value.trim(),
+      price,
+      old_price: document.getElementById('prodOldPrice').value ? parseFloat(document.getElementById('prodOldPrice').value) : null,
+      category: document.getElementById('prodCategory').value,
+      stock: parseInt(document.getElementById('prodStock').value) || 0,
+      featured: document.getElementById('prodFeatured').checked,
+      image_url: imageUrl
+    };
+
+    const id = document.getElementById('prodId').value;
+    let error;
+    if(id){
+      ({ error } = await sb.from('products').update(payload).eq('id', id));
+    } else {
+      ({ error } = await sb.from('products').insert(payload));
+    }
+    if(error) throw error;
+    closeProductModal();
+    await loadAll();
+  }catch(e){
+    console.error(e);
+    errEl.innerText = 'حدث خطأ أثناء الحفظ: ' + (e.message || 'تأكد من إعداد Supabase');
+  }finally{
+    saveBtn.disabled = false; saveBtn.innerText = 'حفظ المنتج';
+  }
+}
+
+async function deleteProduct(id){
+  if(!confirm('متأكد إنك عايز تحذف المنتج ده؟')) return;
+  const { error } = await sb.from('products').delete().eq('id', id);
+  if(error){ alert('حدث خطأ أثناء الحذف'); console.error(error); return; }
+  await loadAll();
+}
+
+/* ---------------- Category Modal ---------------- */
+function openCategoryModal(c){
+  document.getElementById('categoryModalError').innerText = '';
+  if(c && c.id){
+    document.getElementById('categoryModalTitle').innerText = 'تعديل قسم';
+    document.getElementById('catId').value = c.id;
+    document.getElementById('catName').value = c.name || '';
+    document.getElementById('catIcon').value = c.icon || '';
+    document.getElementById('catSort').value = c.sort_order ?? 0;
+  } else {
+    document.getElementById('categoryModalTitle').innerText = 'إضافة قسم';
+    document.getElementById('catId').value = '';
+    document.getElementById('catName').value = '';
+    document.getElementById('catIcon').value = '';
+    document.getElementById('catSort').value = categories.length;
+  }
+  document.getElementById('categoryModalOverlay').classList.add('open');
+}
+function closeCategoryModal(){ document.getElementById('categoryModalOverlay').classList.remove('open'); }
+
+async function saveCategory(){
+  const errEl = document.getElementById('categoryModalError');
+  errEl.innerText = '';
+  const name = document.getElementById('catName').value.trim();
+  if(!name){ errEl.innerText = 'برجاء إدخال اسم القسم'; return; }
+  const payload = {
+    name,
+    icon: document.getElementById('catIcon').value.trim() || '📦',
+    sort_order: parseInt(document.getElementById('catSort').value) || 0
+  };
+  const id = document.getElementById('catId').value;
+  let error;
+  if(id){ ({ error } = await sb.from('categories').update(payload).eq('id', id)); }
+  else { ({ error } = await sb.from('categories').insert(payload)); }
+  if(error){ errEl.innerText = 'حدث خطأ: ' + error.message; return; }
+  closeCategoryModal();
+  await loadAll();
+}
+
+async function deleteCategory(id){
+  if(!confirm('حذف القسم لن يحذف المنتجات المرتبطة به لكنها ستحتاج لتصنيف جديد. متابعة؟')) return;
+  const { error } = await sb.from('categories').delete().eq('id', id);
+  if(error){ alert('حدث خطأ أثناء الحذف'); console.error(error); return; }
+  await loadAll();
+}
+
+checkSession();
+</script>
+</body>
+</html>

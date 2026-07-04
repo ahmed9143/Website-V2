@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT Solutions Pro | أنظمة المراقبة والشبكات وحلول تكنولوجيا المعلومات</title>
+<meta name="description" content="متجر متكامل لأنظمة المراقبة الأمنية، الشبكات، الكمبيوتر واللابتوبات، الطابعات، وحلول UPS. أفضل الأسعار وتوريد وتركيب في مصر.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root[data-theme="dark"]{
+    --navy-950:#050d18;--navy-900:#0b1e3d;--navy-800:#10294f;--navy-700:#173a6b;
+    --cable-blue:#2f6fed;--cable-orange:#ff7a2f;--cable-orange-dim:#ff7a2f22;
+    --paper:#081525;--paper-2:#0b1e3d;--ink:#f4f6f9;--ink-soft:#9fb0d1;--line:#173a6b;
+    --ok:#1fae6b;--danger:#ff5c5c;--radius:14px;--maxw:1280px;--transition:cubic-bezier(.4,0,.2,1) .3s;
+  }
+  :root[data-theme="light"]{
+    --navy-950:#081525;--navy-900:#ffffff;--navy-800:#f4f6f9;--navy-700:#e2e7f0;
+    --cable-blue:#2f6fed;--cable-orange:#ff7a2f;--cable-orange-dim:#ff7a2f22;
+    --paper:#f8fafd;--paper-2:#ffffff;--ink:#0d1b2e;--ink-soft:#4a5876;--line:#e2e7f0;
+    --ok:#1fae6b;--danger:#e5484d;--radius:14px;--maxw:1280px;--transition:cubic-bezier(.4,0,.2,1) .3s;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Cairo',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .3s,color .3s;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px;}
+  ::selection{background:var(--cable-orange);color:#fff;}
+  button{font-family:inherit;}
+
+  .topbar{background:var(--navy-950);color:#cdd8ee;font-size:13px;}
+  .topbar .wrap{display:flex;justify-content:space-between;align-items:center;padding:8px 24px;flex-wrap:wrap;gap:6px;}
+  .topbar .left{display:flex;gap:18px;align-items:center;}
+  .topbar .left span{display:flex;align-items:center;gap:6px;}
+  .topbar .right{display:flex;gap:14px;align-items:center;}
+  .theme-btn{background:var(--navy-800);border:1px solid var(--line);color:var(--ink);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;}
+
+  header.main{background:var(--navy-900);position:sticky;top:0;z-index:100;border-bottom:3px solid var(--cable-orange);}
+  .header-row{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;gap:24px;}
+  .logo{display:flex;align-items:center;gap:10px;color:var(--ink);cursor:pointer;}
+  .logo-mark{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--cable-blue),var(--cable-orange));display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono';font-weight:700;color:#fff;font-size:15px;flex-shrink:0;}
+  .logo-text b{font-size:19px;font-weight:800;display:block;}
+  .logo-text small{font-size:11px;color:var(--ink-soft);font-weight:500;}
+
+  .search-bar{flex:1;max-width:430px;display:flex;align-items:center;background:var(--navy-800);border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .search-bar input{flex:1;background:none;border:none;outline:none;padding:11px 14px;color:var(--ink);font-family:'Cairo';font-size:14px;}
+  .search-bar button{background:var(--cable-orange);border:none;color:#fff;padding:0 16px;cursor:pointer;display:flex;align-items:center;}
+
+  .header-actions{display:flex;align-items:center;gap:20px;}
+  .header-actions .item{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:13px;cursor:pointer;position:relative;}
+  .header-actions .item strong{display:block;font-size:13px;}
+  .header-actions .item small{color:var(--ink-soft);font-size:11px;}
+  .cart-btn-trigger{background:transparent;border:none;text-align:right;padding:0;}
+  .cart-count{position:absolute;top:-6px;left:-8px;background:var(--cable-orange);color:#fff;font-size:10px;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;}
+  .icon-circle{width:38px;height:38px;border-radius:50%;background:var(--navy-800);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:var(--transition);border:1px solid var(--line);}
+  .icon-circle:hover{background:var(--line);}
+
+  nav.catnav{background:var(--navy-800);border-top:1px solid var(--line);}
+  .catnav .wrap{display:flex;align-items:center;gap:2px;padding:0 24px;overflow-x:auto;}
+  .catnav a{color:var(--ink);font-size:14px;font-weight:600;padding:13px 16px;white-space:nowrap;position:relative;transition:var(--transition);cursor:pointer;}
+  .catnav a:hover,.catnav a.active{color:var(--cable-orange);}
+  .catnav a.active::after{content:'';position:absolute;bottom:0;left:16px;right:16px;height:3px;background:var(--cable-orange);border-radius:3px 3px 0 0;}
+  .menu-toggle{display:none;background:transparent;border:none;color:var(--ink);cursor:pointer;}
+
+  .page-view{display:none;opacity:0;transform:translateY(10px);transition:opacity .4s ease,transform .4s ease;}
+  .page-view.active-page{display:block;opacity:1;transform:translateY(0);}
+
+  .hero{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--navy-950) 0%,var(--navy-900) 100%);color:var(--ink);border-bottom:1px solid var(--line);}
+  .hero-inner{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding:72px 24px 64px;max-width:var(--maxw);margin:0 auto;position:relative;z-index:2;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono';font-size:12px;color:var(--cable-orange);letter-spacing:1px;margin-bottom:18px;}
+  .eyebrow::before{content:'';width:8px;height:8px;background:var(--cable-orange);border-radius:50%;display:inline-block;box-shadow:0 0 0 4px var(--cable-orange-dim);}
+  .hero h1{font-size:44px;font-weight:900;line-height:1.25;margin:0 0 18px;}
+  .hero h1 span{background:linear-gradient(90deg,var(--cable-orange),#ffb37a);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .hero p{font-size:16px;color:var(--ink-soft);line-height:1.9;max-width:520px;margin:0 0 30px;}
+  .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:36px;}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:10px;font-weight:700;font-size:14.5px;cursor:pointer;border:none;transition:transform .2s,box-shadow .2s;}
+  .btn:hover{transform:translateY(-2px);}
+  .btn-primary{background:var(--cable-orange);color:#fff;box-shadow:0 8px 24px -8px #ff7a2f88;}
+  .btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--line);}
+  .btn-outline:hover{border-color:var(--cable-orange);background:var(--navy-800);}
+  .hero-stats{display:flex;gap:32px;flex-wrap:wrap;}
+  .hero-stats .st b{font-family:'JetBrains Mono';font-size:24px;color:var(--ink);display:block;}
+  .hero-stats .st span{font-size:12.5px;color:var(--ink-soft);}
+  .hero-visual{position:relative;height:400px;}
+  .hero-visual svg{width:100%;height:100%;}
+  .node{fill:var(--navy-800);stroke:var(--cable-blue);stroke-width:1.5;}
+  .node-orange{stroke:var(--cable-orange);}
+  .link{stroke:var(--line);stroke-width:1;}
+  .pulse{fill:var(--cable-orange);}
+
+  section{padding:64px 0;}
+  .sec-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:34px;gap:20px;flex-wrap:wrap;}
+  .sec-head h2{font-size:28px;font-weight:800;margin:0 0 8px;}
+  .sec-head p{color:var(--ink-soft);margin:0;font-size:14.5px;}
+
+  .cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  .cat-card{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius);padding:26px 20px;text-align:center;cursor:pointer;transition:var(--transition);}
+  .cat-card:hover{border-color:var(--cable-orange);transform:translateY(-4px);}
+  .cat-icon{font-size:34px;margin-bottom:12px;}
+  .cat-card b{display:block;font-size:15px;margin-bottom:4px;}
+  .cat-card span{font-size:12px;color:var(--ink-soft);}
+
+  .filters-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:30px;}
+  .filter-btn{background:var(--paper-2);border:1px solid var(--line);color:var(--ink);padding:9px 18px;border-radius:30px;font-size:13.5px;font-weight:600;cursor:pointer;transition:var(--transition);}
+  .filter-btn:hover{border-color:var(--cable-orange);}
+  .filter-btn.active{background:var(--cable-orange);color:#fff;border-color:var(--cable-orange);}
+
+  .prod-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+  .prod-card{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:var(--transition);display:flex;flex-direction:column;}
+  .prod-card:hover{border-color:var(--cable-orange);box-shadow:0 14px 30px -18px rgba(0,0,0,.5);}
+  .prod-thumb{aspect-ratio:1/1;background:var(--navy-800);position:relative;overflow:hidden;}
+  .prod-thumb img{width:100%;height:100%;object-fit:cover;}
+  .prod-badge{position:absolute;top:10px;right:10px;background:var(--cable-orange);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;}
+  .prod-badge.stock{background:var(--ok);}
+  .prod-body{padding:16px;display:flex;flex-direction:column;gap:8px;flex:1;}
+  .prod-cat{font-size:11px;color:var(--cable-blue);font-weight:700;}
+  .prod-name{font-size:14.5px;font-weight:700;line-height:1.5;min-height:44px;}
+  .prod-price-row{display:flex;align-items:baseline;gap:8px;margin-top:auto;}
+  .prod-price{font-family:'JetBrains Mono';font-size:18px;font-weight:700;color:var(--cable-orange);}
+  .prod-old{font-size:12.5px;color:var(--ink-soft);text-decoration:line-through;}
+  .add-btn{margin-top:8px;background:var(--navy-800);border:1px solid var(--line);color:var(--ink);padding:10px;border-radius:9px;font-weight:700;font-size:13.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:var(--transition);}
+  .add-btn:hover{background:var(--cable-orange);border-color:var(--cable-orange);color:#fff;}
+  .empty-state{text-align:center;padding:60px 20px;color:var(--ink-soft);grid-column:1/-1;}
+
+  .info-card{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius);padding:34px;}
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;}
+  .about-grid h3{font-size:26px;margin:0 0 14px;}
+  .about-grid p{color:var(--ink-soft);line-height:1.9;font-size:15px;}
+  .feat-list{list-style:none;padding:0;margin:20px 0 0;display:grid;gap:12px;}
+  .feat-list li{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink);}
+  .feat-list li::before{content:'✓';background:var(--ok);color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:2px;}
+
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;}
+  .contact-grid h3{margin:0 0 16px;font-size:19px;}
+  .contact-grid p{margin:8px 0;font-size:14px;color:var(--ink-soft);}
+  .form-group{margin-bottom:16px;}
+  .form-group label{display:block;font-size:13px;margin-bottom:6px;font-weight:600;}
+  .form-group input,.form-group textarea{width:100%;background:var(--navy-800);border:1px solid var(--line);border-radius:9px;padding:11px 14px;color:var(--ink);font-family:'Cairo';font-size:14px;outline:none;}
+
+  .brands{padding:28px 0;}
+  .brands .wrap{display:flex;align-items:center;gap:28px;flex-wrap:wrap;}
+  .brand-name{color:var(--ink-soft);font-weight:700;font-size:14px;opacity:.75;}
+
+  .cta-band{background:linear-gradient(120deg,var(--navy-950),var(--navy-900));border:1px solid var(--line);border-radius:var(--radius);padding:36px 34px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;}
+  .cta-band h3{margin:0 0 6px;font-size:20px;color:#fff;}
+  .cta-band p{margin:0;color:var(--ink-soft);font-size:14px;max-width:480px;}
+
+  footer{background:var(--navy-950);color:#cdd8ee;padding:50px 0 0;margin-top:40px;}
+  .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.4fr;gap:34px;padding-bottom:34px;}
+  .foot-grid h4{color:#fff;font-size:14.5px;margin:0 0 14px;}
+  .foot-grid ul{list-style:none;padding:0;margin:0;display:grid;gap:9px;}
+  .foot-grid ul a{font-size:13.5px;opacity:.8;cursor:pointer;}
+  .foot-grid ul a:hover{opacity:1;color:var(--cable-orange);}
+  .newsletter{display:flex;gap:8px;}
+  .newsletter input{flex:1;background:var(--navy-900);border:1px solid var(--navy-700);border-radius:8px;padding:10px;color:#fff;font-family:'Cairo';}
+  .newsletter button{background:var(--cable-orange);border:none;color:#fff;padding:0 16px;border-radius:8px;cursor:pointer;font-weight:700;}
+  .bottom-bar{border-top:1px solid var(--navy-800);padding:18px 24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;opacity:.75;}
+
+  .cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);opacity:0;visibility:hidden;transition:.3s;z-index:200;}
+  .cart-overlay.open{opacity:1;visibility:visible;}
+  .cart-drawer{position:fixed;top:0;left:-420px;width:400px;max-width:90vw;height:100%;background:var(--paper-2);z-index:201;transition:.35s;display:flex;flex-direction:column;box-shadow:20px 0 40px rgba(0,0,0,.3);}
+  .cart-drawer.open{left:0;}
+  .cart-head{padding:20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+  .cart-items{flex:1;overflow-y:auto;padding:16px 20px;}
+  .cart-empty-msg{text-align:center;color:var(--ink-soft);padding:60px 10px;font-size:14px;}
+  .cart-item{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);gap:10px;}
+  .cart-item-title{font-size:13.5px;font-weight:700;margin-bottom:6px;}
+  .cart-item-price{font-family:'JetBrains Mono';color:var(--cable-orange);font-size:13px;margin-bottom:8px;}
+  .cart-item-qty{display:flex;align-items:center;gap:10px;}
+  .qty-btn{width:26px;height:26px;border-radius:6px;border:1px solid var(--line);background:var(--navy-800);color:var(--ink);cursor:pointer;}
+  .remove-item{color:var(--danger);font-size:12px;cursor:pointer;background:none;border:none;}
+  .cart-foot{padding:20px;border-top:1px solid var(--line);}
+  .cart-total-row{display:flex;justify-content:space-between;margin-bottom:14px;font-weight:700;}
+
+  @media(max-width:980px){
+    .hero-inner{grid-template-columns:1fr;}
+    .hero-visual{display:none;}
+    .cat-grid{grid-template-columns:repeat(2,1fr);}
+    .prod-grid{grid-template-columns:repeat(2,1fr);}
+    .about-grid,.contact-grid{grid-template-columns:1fr;}
+    .foot-grid{grid-template-columns:1fr 1fr;}
+    .search-bar{display:none;}
+    .menu-toggle{display:block;}
+    .catnav .wrap{flex-direction:column;align-items:flex-start;max-height:0;overflow:hidden;padding:0 24px;}
+    .catnav .wrap.mobile-open{max-height:500px;padding:10px 24px;}
+    .header-actions .item strong,.header-actions .item small{display:none;}
+  }
+  @media(max-width:520px){
+    .cat-grid,.prod-grid{grid-template-columns:repeat(2,1fr);}
+    .hero h1{font-size:32px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="left">
+      <span>🚚 توريد وتركيب داخل جمهورية مصر العربية</span>
+      <span>🛡️ ضمان رسمي على كل المنتجات</span>
+    </div>
+    <div class="right">
+      <a onclick="openGeneralWhatsApp()">تواصل واتساب</a>
+      <button class="theme-btn" id="themeToggleBtn">☀️ / 🌙</button>
+    </div>
+  </div>
+</div>
+
+<header class="main">
+  <div class="header-row wrap">
+    <div class="logo" onclick="navigateTo('home')">
+      <div class="logo-mark">IT</div>
+      <div class="logo-text"><b>IT SOLUTIONS</b><small>PRO SYSTEMS &amp; SECURITY</small></div>
+    </div>
+    <div class="search-bar">
+      <input type="text" id="mainSearchInput" placeholder="ابحث عن كاميرا، لابتوب، سويتش شبكة...">
+      <button onclick="executeSearch()">🔍</button>
+    </div>
+    <div class="header-actions">
+      <button class="cart-btn-trigger item" id="cartTriggerBtn">
+        <div class="icon-circle" style="position:relative;">
+          🛒<span class="cart-count" id="cartCountBadge">0</span>
+        </div>
+        <div><strong>السلة</strong><small id="cartTotalHeader">0 ج.م</small></div>
+      </button>
+      <button class="menu-toggle" id="menuToggle">☰</button>
+    </div>
+  </div>
+  <nav class="catnav">
+    <div class="wrap" id="catNavMenu">
+      <a class="active" data-page="home" onclick="navigateTo('home')">الرئيسية</a>
+      <a data-page="products" onclick="navigateTo('products')">كل المنتجات</a>
+      <a data-page="about" onclick="navigateTo('about')">من نحن</a>
+      <a data-page="contact" onclick="navigateTo('contact')">اطلب مقايسة</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <!-- HOME -->
+  <div class="page-view active-page" id="page-home">
+    <section class="hero">
+      <div class="hero-inner">
+        <div>
+          <div class="eyebrow">حلول تقنية وأمنية متكاملة</div>
+          <h1>نجهّز منشأتك بأحدث <span>أنظمة المراقبة والشبكات</span> وأجهزة الكمبيوتر</h1>
+          <p>كاميرات مراقبة ذكية، شبكات وUPS، لابتوبات وطابعات، وتوريد وتركيب باحترافية هندسية - كل ده في مكان واحد وبضمان حقيقي.</p>
+          <div class="hero-ctas">
+            <a class="btn btn-primary" onclick="navigateTo('products')">تصفح المنتجات</a>
+            <a class="btn btn-outline" onclick="navigateTo('contact')">اطلب مقايسة مجانية</a>
+          </div>
+          <div class="hero-stats">
+            <div class="st"><b>+500</b><span>مشروع منفذ</span></div>
+            <div class="st"><b>24/7</b><span>دعم فني</span></div>
+            <div class="st"><b>2 سنة</b><span>ضمان</span></div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <svg id="netsvg" viewBox="0 0 420 380"><g class="links"></g><g class="nodes"></g></svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="sec-head">
+        <div><h2>تسوق حسب القسم</h2><p>اختر القسم المناسب لاحتياجك</p></div>
+      </div>
+      <div class="cat-grid" id="homeCatGrid"></div>
+    </section>
+
+    <section class="wrap">
+      <div class="sec-head">
+        <div><h2>منتجات مميزة</h2><p>أفضل الأصناف طلبًا هذا الأسبوع</p></div>
+        <a class="btn btn-outline" onclick="navigateTo('products')">عرض الكل</a>
+      </div>
+      <div class="prod-grid" id="featuredGrid"></div>
+    </section>
+
+    <section class="brands">
+      <div class="wrap">
+        <span class="brand-name" style="color:var(--ink-soft);">الشركاء والتوكيلات:</span>
+        <span class="brand-name">TechNet Enterprise</span>
+        <span class="brand-name">ProLink Networks</span>
+        <span class="brand-name">SecureView AI</span>
+        <span class="brand-name">NetCore Labs</span>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="cta-band">
+        <div><h3>محتاج مقايسة لمشروع أو مبنى كامل؟</h3><p>فريقنا الهندسي يقدر يجهزلك عرض سعر شامل تركيب وتوريد في وقت قياسي.</p></div>
+        <a class="btn btn-primary" onclick="navigateTo('contact')">اطلب تسعير الآن</a>
+      </div>
+    </section>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div class="page-view" id="page-products">
+    <section class="wrap">
+      <div class="sec-head">
+        <div><h2>كل المنتجات</h2><p id="productsCountLabel">جاري التحميل...</p></div>
+      </div>
+      <div class="filters-bar" id="filtersBar"></div>
+      <div class="prod-grid" id="allProductsGrid"></div>
+    </section>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="page-view" id="page-about">
+    <section class="wrap">
+      <div class="info-card">
+        <div class="about-grid">
+          <div>
+            <h3>عن IT Solutions Pro</h3>
+            <p>شركة متخصصة في توريد وتركيب أنظمة المراقبة الأمنية، الشبكات، أجهزة الكمبيوتر واللابتوبات، الطابعات، وحلول UPS للمنشآت والشركات والمنازل. بنقدم استشارة فنية مجانية ونضمن جودة كل قطعة بنوردها.</p>
+            <ul class="feat-list">
+              <li>فريق هندسي متخصص في التركيب والصيانة</li>
+              <li>توكيلات رسمية لأفضل الماركات العالمية</li>
+              <li>ضمان حقيقي وخدمة ما بعد البيع</li>
+              <li>أسعار تنافسية ومقايسات مجانية</li>
+            </ul>
+          </div>
+          <div class="hero-visual" style="height:320px;">
+            <svg viewBox="0 0 420 380"><g><circle cx="210" cy="190" r="140" fill="none" stroke="var(--line)" stroke-width="1"/><circle cx="210" cy="190" r="90" fill="none" stroke="var(--cable-blue)" stroke-width="1.5"/><circle cx="210" cy="190" r="40" fill="var(--cable-orange)" opacity=".15"/></g></svg>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="page-view" id="page-contact">
+    <section class="wrap">
+      <div class="info-card">
+        <div class="contact-grid">
+          <div>
+            <h3>المكتب المركزي الهندسي</h3>
+            <p>📍 المقر الإقليمي: جمهورية مصر العربية</p>
+            <p>📞 الخط الساخن: متاح عبر الواتساب</p>
+            <p>✉️ المراسلات: corporate@itsolutions-pro.com</p>
+            <button class="btn btn-primary" onclick="openGeneralWhatsApp()" style="margin-top:20px;">تحدث مع مهندس الأنظمة مباشرة</button>
+          </div>
+          <div>
+            <h3>طلب مقايسة</h3>
+            <div class="form-group"><label>اسم المنشأة / العميل</label><input type="text" id="contactName" placeholder="مثال: شركة النور للتطوير"></div>
+            <div class="form-group"><label>تفاصيل الطلب</label><textarea id="contactDetails" rows="4" placeholder="اذكر عدد الكاميرات أو نقاط الشبكة أو نوع الأجهزة المطلوبة..."></textarea></div>
+            <button class="btn btn-outline" onclick="sendStructuredForm()">إرسال الطلب</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="logo" style="margin-bottom:14px;" onclick="navigateTo('home')">
+          <div class="logo-mark">IT</div><div class="logo-text"><b style="color:#fff;">IT SOLUTIONS</b></div>
+        </div>
+        <p style="line-height:1.9;font-size:13.5px;">توريد وتركيب أنظمة المراقبة، الشبكات، الكمبيوتر، الطابعات وUPS لكل المنشآت.</p>
+      </div>
+      <div><h4>أقسام الموقع</h4><ul>
+        <li><a onclick="navigateTo('about')">من نحن</a></li>
+        <li><a onclick="navigateTo('products')">المنتجات</a></li>
+        <li><a onclick="navigateTo('contact')">اطلب مقايسة</a></li>
+      </ul></div>
+      <div><h4>الدعم</h4><ul>
+        <li><a onclick="navigateTo('contact')">الضمان والسياسات</a></li>
+        <li><a onclick="openGeneralWhatsApp()">تواصل معنا</a></li>
+      </ul></div>
+      <div><h4>النشرة التقنية</h4>
+        <div class="newsletter"><input type="email" placeholder="بريدك الإلكتروني"><button onclick="alert('شكرًا لتسجيلك!')">اشترك</button></div>
+      </div>
+    </div>
+    <div class="bottom-bar">
+      <span style="font-size:12.5px;">© 2026 IT Solutions Pro. جميع الحقوق محفوظة.</span>
+      <span style="font-size:12.5px;">تصميم وتطوير متكامل</span>
+    </div>
+  </div>
+</footer>
+
+<a id="waFloat" onclick="openGeneralWhatsApp()" style="position:fixed;bottom:22px;left:22px;z-index:999;width:56px;height:56px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px -8px rgba(37,211,102,.6);cursor:pointer;">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.5 14.4c-.3-.1-1.7-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.2-.3 0-.4.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.2-.4.1-.2 0-.3 0-.5s-.6-1.5-.9-2.1c-.2-.5-.5-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.3 0 1.4 1 2.7 1.1 2.9.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.2-1.3-.1-.2-.3-.3-.5-.4z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.6 1.4 5.1L2 22l5-1.3c1.4.8 3.1 1.3 4.9 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3C4.2 15 3.8 13.5 3.8 12c0-4.5 3.7-8.2 8.2-8.2s8.2 3.7 8.2 8.2-3.7 8.2-8.2 8.2z"/></svg>
+</a>
+
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-head"><h3 style="margin:0;">سلة المشتريات</h3><button id="closeCartBtn" style="background:none;border:none;font-size:22px;color:var(--ink);cursor:pointer;">×</button></div>
+  <div class="cart-items" id="cartItemsContainer"></div>
+  <div class="cart-foot">
+    <div class="cart-total-row"><span>الإجمالي</span><span id="cartDrawerTotal">0 ج.م</span></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;" id="checkoutWhatsappBtn">إتمام الطلب عبر واتساب</button>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script>
+let products = [];
+let categories = [];
+let cart = JSON.parse(localStorage.getItem('it_pro_cart') || '{}');
+let currentCategoryFilter = 'الكل';
+
+const CAT_ICONS = {'كاميرات مراقبة':'📷','أنظمة أمنية':'🛡️','كمبيوتر ولابتوبات':'💻','طابعات':'🖨️','شبكات':'🌐','UPS وحلول الطاقة':'🔋','حلول IT متكاملة':'🖥️'};
+
+async function loadData(){
+  const { data: catData, error: catErr } = await sb.from('categories').select('*').order('sort_order',{ascending:true});
+  const { data: prodData, error: prodErr } = await sb.from('products').select('*').order('created_at',{ascending:false});
+  if(catErr || prodErr){
+    document.getElementById('featuredGrid').innerHTML = '<div class="empty-state">تعذر تحميل البيانات. تأكد من ربط Supabase في ملف config.js</div>';
+    console.error(catErr, prodErr);
+    return;
+  }
+  categories = catData || [];
+  products = prodData || [];
+  renderCatGrid();
+  renderFilters();
+  renderFeatured();
+  renderProducts();
+}
+
+function renderCatGrid(){
+  const grid = document.getElementById('homeCatGrid');
+  grid.innerHTML = categories.map(c => `
+    <div class="cat-card" onclick="selectCategoryFilter('${c.name}')">
+      <div class="cat-icon">${c.icon || CAT_ICONS[c.name] || '📦'}</div>
+      <b>${c.name}</b>
+      <span>${products.filter(p=>p.category===c.name).length} منتج</span>
+    </div>`).join('') || '<div class="empty-state">لا توجد أقسام بعد - أضفها من لوحة التحكم</div>';
+}
+
+function renderFilters(){
+  const bar = document.getElementById('filtersBar');
+  const cats = ['الكل', ...categories.map(c=>c.name)];
+  bar.innerHTML = cats.map(c => `<button class="filter-btn ${c===currentCategoryFilter?'active':''}" onclick="filterByCat('${c}', this)">${c}</button>`).join('');
+}
+
+function productCardHTML(p){
+  const discount = p.old_price && p.old_price > p.price;
+  const badge = discount ? `<div class="prod-badge">خصم ${Math.round(100-(p.price/p.old_price*100))}%</div>` : (p.stock>0 ? `<div class="prod-badge stock">متوفر</div>` : `<div class="prod-badge" style="background:var(--danger);">غير متوفر</div>`);
+  return `
+    <div class="prod-card">
+      <div class="prod-thumb">
+        <img src="${p.image_url || 'https://placehold.co/400x400/10294f/9fb0d1?text=No+Image'}" alt="${p.name}" loading="lazy">
+        ${badge}
+      </div>
+      <div class="prod-body">
+        <div class="prod-cat">${p.category || ''}</div>
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-price-row">
+          <span class="prod-price">${Number(p.price).toLocaleString('ar-EG')} ج.م</span>
+          ${discount ? `<span class="prod-old">${Number(p.old_price).toLocaleString('ar-EG')} ج.م</span>` : ''}
+        </div>
+        <button class="add-btn" onclick="addToCart('${p.id}', this)">🛒 أضف للسلة</button>
+      </div>
+    </div>`;
+}
+
+function renderFeatured(){
+  const el = document.getElementById('featuredGrid');
+  const feat = products.filter(p=>p.featured).slice(0,8);
+  const list = feat.length ? feat : products.slice(0,8);
+  el.innerHTML = list.map(productCardHTML).join('') || '<div class="empty-state">لا توجد منتجات بعد - أضفها من لوحة التحكم</div>';
+}
+
+function renderProducts(cat = currentCategoryFilter, query = ''){
+  const el = document.getElementById('allProductsGrid');
+  let list = products;
+  if(cat && cat !== 'الكل') list = list.filter(p => p.category === cat);
+  if(query) list = list.filter(p => p.name.toLowerCase().includes(query.toLowerCase()));
+  document.getElementById('productsCountLabel').innerText = `${list.length} منتج متاح`;
+  el.innerHTML = list.map(productCardHTML).join('') || '<div class="empty-state">لا توجد منتجات مطابقة</div>';
+}
+
+function filterByCat(cat, btnEl){
+  currentCategoryFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  if(btnEl) btnEl.classList.add('active');
+  renderProducts(cat, document.getElementById('mainSearchInput').value);
+}
+
+function selectCategoryFilter(cat){
+  navigateTo('products');
+  currentCategoryFilter = cat;
+  renderFilters();
+  renderProducts(cat, '');
+}
+
+function executeSearch(){
+  const query = document.getElementById('mainSearchInput').value;
+  navigateTo('products');
+  renderProducts(currentCategoryFilter, query);
+}
+
+function navigateTo(page){
+  document.querySelectorAll('.page-view').forEach(p=>p.classList.remove('active-page'));
+  document.getElementById('page-'+page).classList.add('active-page');
+  document.querySelectorAll('.catnav a').forEach(a=>a.classList.toggle('active', a.dataset.page===page));
+  window.scrollTo({top:0, behavior:'smooth'});
+  document.getElementById('catNavMenu').classList.remove('mobile-open');
+}
+
+function addToCart(id, btn){
+  cart[id] = (cart[id] || 0) + 1;
+  saveCartAndRefresh();
+  const original = btn.innerHTML;
+  btn.style.background = '#1fae6b'; btn.innerHTML = '✓ أضيف للسلة';
+  setTimeout(()=>{ btn.style.background=''; btn.innerHTML=original; }, 900);
+}
+function changeQty(id, delta){
+  if(cart[id]){ cart[id]+=delta; if(cart[id]<=0) delete cart[id]; saveCartAndRefresh(); }
+}
+function removeFromCart(id){ delete cart[id]; saveCartAndRefresh(); }
+function saveCartAndRefresh(){ localStorage.setItem('it_pro_cart', JSON.stringify(cart)); updateCartUI(); }
+
+function updateCartUI(){
+  let totalCount=0, totalPrice=0;
+  const container = document.getElementById('cartItemsContainer');
+  Object.keys(cart).forEach(id=>{
+    const p = products.find(x=>x.id==id);
+    if(p){ totalCount+=cart[id]; totalPrice += p.price*cart[id]; }
+  });
+  document.getElementById('cartCountBadge').innerText = totalCount;
+  document.getElementById('cartTotalHeader').innerText = totalPrice.toLocaleString('ar-EG')+' ج.م';
+  document.getElementById('cartDrawerTotal').innerText = totalPrice.toLocaleString('ar-EG')+' ج.م';
+  if(totalCount===0){
+    container.innerHTML = '<div class="cart-empty-msg">سلة المشتريات فارغة حالياً.</div>';
+  } else {
+    container.innerHTML = Object.keys(cart).map(id=>{
+      const p = products.find(x=>x.id==id);
+      if(!p) return '';
+      return `<div class="cart-item">
+        <div class="cart-item-details">
+          <div class="cart-item-title">${p.name}</div>
+          <div class="cart-item-price">${(p.price*cart[id]).toLocaleString('ar-EG')} ج.م</div>
+          <div class="cart-item-qty">
+            <button class="qty-btn" onclick="changeQty('${p.id}',-1)">-</button>
+            <span>${cart[id]}</span>
+            <button class="qty-btn" onclick="changeQty('${p.id}',1)">+</button>
+          </div>
+        </div>
+        <button class="remove-item" onclick="removeFromCart('${p.id}')">حذف</button>
+      </div>`;
+    }).join('');
+  }
+}
+
+function checkoutViaWhatsApp(){
+  const keys = Object.keys(cart);
+  if(keys.length===0) return alert('برجاء إضافة منتجات للسلة أولاً!');
+  let msg = "🛒 *طلب جديد - IT Solutions Pro*\n-------------------------\n\n";
+  let total = 0;
+  keys.forEach(id=>{
+    const p = products.find(x=>x.id==id);
+    if(p){ const qty=cart[id]; total += p.price*qty; msg += `▪️ *${p.name}*\n   العدد: ${qty} | إجمالي: ${(p.price*qty).toLocaleString('ar-EG')} ج.م\n\n`; }
+  });
+  msg += "-------------------------\n";
+  msg += `💰 *الإجمالي:* ${total.toLocaleString('ar-EG')} ج.م\n\nبرجاء تأكيد الطلب وتحديد ميعاد التسليم/التركيب المناسب.`;
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function sendStructuredForm(){
+  const name = document.getElementById('contactName').value;
+  const details = document.getElementById('contactDetails').value;
+  if(!name || !details) return alert('برجاء ملء البيانات لتجهيز المقايسة.');
+  let msg = `🏛️ *طلب مقايسة جديد*\n\n*الاسم:* ${name}\n*التفاصيل:* ${details}`;
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function openGeneralWhatsApp(){
+  const msg = "مرحبًا، أرغب في الاستفسار عن أنظمتكم وخدماتكم.";
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+const themeToggleBtn = document.getElementById('themeToggleBtn');
+themeToggleBtn.addEventListener('click', ()=>{
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur==='dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('it_theme', next);
+});
+document.documentElement.setAttribute('data-theme', localStorage.getItem('it_theme') || 'dark');
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  loadData();
+  updateCartUI();
+  document.getElementById('mainSearchInput').addEventListener('keyup', executeSearch);
+  const drawer = document.getElementById('cartDrawer');
+  const overlay = document.getElementById('cartOverlay');
+  document.getElementById('cartTriggerBtn').addEventListener('click', ()=>{ drawer.classList.add('open'); overlay.classList.add('open'); });
+  document.getElementById('closeCartBtn').addEventListener('click', ()=>{ drawer.classList.remove('open'); overlay.classList.remove('open'); });
+  overlay.addEventListener('click', ()=>{ drawer.classList.remove('open'); overlay.classList.remove('open'); });
+  document.getElementById('checkoutWhatsappBtn').addEventListener('click', checkoutViaWhatsApp);
+  document.getElementById('menuToggle').addEventListener('click', ()=>{ document.getElementById('catNavMenu').classList.toggle('mobile-open'); });
+});
+
+(function(){
+  const svg = document.getElementById('netsvg');
+  if(!svg) return;
+  const linksG = svg.querySelector('.links'), nodesG = svg.querySelector('.nodes');
+  const pts = [[60,80],[210,40],[350,90],[110,190],[260,170],[380,230],[70,300],[210,340],[330,330],[150,250]];
+  const edges = [[0,1],[1,2],[0,3],[1,4],[2,5],[3,4],[4,5],[3,6],[4,7],[5,8],[6,7],[7,8],[3,9],[7,9]];
+  edges.forEach(([a,b])=>{
+    const [x1,y1]=pts[a], [x2,y2]=pts[b];
+    const l = document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',x1); l.setAttribute('y1',y1); l.setAttribute('x2',x2); l.setAttribute('y2',y2); l.setAttribute('class','link');
+    linksG.appendChild(l);
+  });
+  pts.forEach((p,i)=>{
+    const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',p[0]); c.setAttribute('cy',p[1]); c.setAttribute('r', i%3===0?7:5);
+    c.setAttribute('class','node'+(i%4===0?' node-orange':''));
+    nodesG.appendChild(c);
+  });
+  function spawnPulse(){
+    if(document.hidden) return;
+    const [a,b] = edges[Math.floor(Math.random()*edges.length)];
+    const [x1,y1]=pts[a], [x2,y2]=pts[b];
+    const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    dot.setAttribute('r',3.5); dot.setAttribute('class','pulse'); svg.appendChild(dot);
+    let t=0; const dur=1400+Math.random()*800; const start=performance.now();
+    function step(now){
+      t=Math.min(1,(now-start)/dur);
+      dot.setAttribute('cx', x1+(x2-x1)*t); dot.setAttribute('cy', y1+(y2-y1)*t);
+      dot.setAttribute('opacity', t<0.1? t*10 : (t>0.85? (1-t)/0.15 : 1));
+      if(t<1) requestAnimationFrame(step); else dot.remove();
+    }
+    requestAnimationFrame(step);
+  }
+  setInterval(spawnPulse, 600);
+})();
+</script>
+</body>
+</html>
